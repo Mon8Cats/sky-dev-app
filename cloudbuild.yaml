@@ -46,7 +46,7 @@ substitutions:
   #_PROJECT_ID: "sky-root"  # Replace with the actual project ID or set dynamically in GitHub Actions
   _ARTIFACT_REPO: "sky-art"
   _SERVICE_ACCOUNT: "cicd-sa-app"
-  _APP_NAME :"sky-flask-app"
+  _APP_NAME: "sky-flask-app"
 
 logsBucket: "gs://skydev-app-build-logs"
 
