@@ -1,0 +1,54 @@
+serviceAccount: ${_SERVICE_ACCOUNT}@${_PROJECT_ID}.iam.gserviceaccount.com
+
+steps:
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build Docker Image'
+    args: ['build', '-t', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_ARTIFACT_REPO}/${_APP_NAME}:$SHORT_SHA', '.']
+
+  # Step 2: Push the Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Docker Image'
+    args: ['push', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_ARTIFACT_REPO}/${_APP_NAME}:$SHORT_SHA']
+
+  # Step 3: Deploy the image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy to Cloud Run'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'my-flask-service'
+      - '--image=${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_ARTIFACT_REPO}/${_APP_NAME}:$SHORT_SHA'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+
+  # Step 4: Verify the deployment status
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Check Deployment Status'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'services'
+      - 'describe'
+      - 'my-flask-service'
+      - '--region=us-central1'
+
+
+images:
+  - '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_ARTIFACT_REPO}/${_APP_NAME}:$SHORT_SHA'
+
+timeout: '1200s'
+
+
+substitutions:
+  #_PROJECT_ID: "sky-root"  # Replace with the actual project ID or set dynamically in GitHub Actions
+  _ARTIFACT_REPO: "sky-art"
+  _SERVICE_ACCOUNT: "cicd-sa-app"
+  _APP_NAME :"sky-flask-app"
+
+logsBucket: "gs://skydev-app-build-logs"
+
+#options:
+#  logging: CLOUD_LOGGING_ONLY

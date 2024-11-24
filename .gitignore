@@ -1,0 +1,87 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C Extensions
+*.so
+
+# Flask specific files
+instance/
+.env
+*.env
+
+# Pytest and Coverage files
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Distribution / packaging
+.Python
+#build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Logs and debug files
+logs/
+*.log
+*.out
+*.err
+debug/
+
+# Docker
+*.dockerignore
+#Dockerfile
+docker-compose.yml
+.docker/
+docker-compose.override.yml
+
+# Kubernetes
+#*.yaml
+#*.yml
+.kube/
+kubectl-config
+
+# Cloud Build
+#.cloudbuild/
+#cloudbuild.yaml
+*.tfstate
+.terraform/
+
+# Python environment files
+pip-log.txt
+pip-delete-this-directory.txt
+pyvenv.cfg
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db

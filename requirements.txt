@@ -1,0 +1,8 @@
+flask
+flask-smorest
+gunicorn
+flask-cors
+flask-sqlalchemy
+marshmallow
+pg8000
+google-cloud-secret-manager
