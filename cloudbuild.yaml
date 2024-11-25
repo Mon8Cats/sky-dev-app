@@ -43,7 +43,9 @@ timeout: '1200s'
 
 
 substitutions:
-  #_PROJECT_ID: "sky-root"  # Replace with the actual project ID or set dynamically in GitHub Actions
+  _PROJECT_ID: "sky-root"  # Replace with the actual project ID or set dynamically in GitHub Actions
+  _REGION: "us-central1"
+  _PROJECT_NUMBER: "262659146932"
   _ARTIFACT_REPO: "sky-art"
   _CLOUD_RUN_SA: "cloud-run-sa"
   _APP_NAME: "sky-flask-app"
