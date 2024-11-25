@@ -22,7 +22,7 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--service-account=${_CLOUD_RUN_SA}@${_PROJECT_ID}.iam.gserviceaccount.com'
-      - '--set-env-vars=DB_NAME=${_DB_NAME},INSTANCE_CONNECTION_NAME=${_INSTANCE_CONNECTION_NAME}'
+      - '--set-env-vars=PROJECT_ID=${_PROJECT_ID},REGION=${_REGION},DB_NAME=${_DB_NAME},INSTANCE_CONNECTION_NAME=${_INSTANCE_CONNECTION_NAME}'
 
   # Step 4: Verify the deployment status
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -47,16 +47,11 @@ substitutions:
   _ARTIFACT_REPO: "sky-art"
   _CLOUD_RUN_SA: "cloud-run-sa"
   _APP_NAME: "sky-flask-app"
+  _DB_NAME: "devdb"
+  _INSTANCE_CONNECTION_NAME: "sky-root:us-central1:skypostgre"
 
 logsBucket: "gs://skydev-app-build-logs"
 
 #options:
 #  logging: CLOUD_LOGGING_ONLY
 
-substitutions:
-  #_PROJECT_ID: "sky-root"
-  #_REGION: "us-central1"
-  #_INSTANCE_CONNECTION_NAME: "$$GCP_INSTANCE_CONNECTION_NAME"
-  #_DB_NAME: "$$GCP_DB_NAME"
-  _DB_NAME: "devdb"
-  _INSTANCE_CONNECTION_NAME: "sky-root:us-central1:skypostgre"
