@@ -2,8 +2,9 @@ flask
 flask-smorest
 gunicorn
 flask-cors
+sqlalchemy
 flask-sqlalchemy
 marshmallow
 pg8000
 google-cloud-secret-manager
-google-cloud-sql
+

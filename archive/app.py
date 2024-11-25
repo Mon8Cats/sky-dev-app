@@ -1,17 +1,15 @@
-
+#
 # pylint: disable=import-error
+#
 
-from flask import Flask
+from flask import Flask, request
 from flask_smorest import Api, Blueprint
 from marshmallow import Schema, fields
 from flask.views import MethodView
 from flask_sqlalchemy import SQLAlchemy
 import config  # Import the database configuration
 
-# Initialize the Flask app and SQLAlchemy
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = config.SQLALCHEMY_DATABASE_URI
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 app.config["API_TITLE"] = "User API"
 app.config["API_VERSION"] = "1.0"
 app.config["OPENAPI_VERSION"] = "3.0.2"
@@ -19,38 +17,45 @@ app.config["OPENAPI_URL_PREFIX"] = "/swagger"
 app.config["OPENAPI_SWAGGER_UI_PATH"] = "/"
 app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
-db = SQLAlchemy(app)  # Database instance
 api = Api(app)
 
-# Define the User model
-class User(db.Model):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+blp = Blueprint("users", "users", url_prefix="/users", description="Operations on users")
 
-# Schema for validating and serializing User data
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     email = fields.Str(required=True)
 
-blp = Blueprint("users", "users", url_prefix="/users", description="Operations on users")
+
+# In-memory database
+users = [
+    {"id": 1, "name": "John Doe", "email": "john.doe@example.com"},
+    {"id": 2, "name": "Jane Smith", "email": "jane.smith@example.com"},
+    {"id": 3, "name": "Alice Johnson", "email": "alice.johnson@example.com"},
+    {"id": 4, "name": "Bob Brown", "email": "bob.brown@example.com"},
+    {"id": 5, "name": "Charlie Davis", "email": "charlie.davis@example.com"}
+]
+
+user_id_counter = 6
+
+def find_user(user_id):
+    return next((user for user in users if user["id"] == user_id), None)
 
 @blp.route("/")
 class UserListResource(MethodView):
     @blp.response(200, UserSchema(many=True))
     def get(self):
         """Get all users"""
-        return User.query.all()
+        return users
 
     @blp.arguments(UserSchema)
     @blp.response(201, UserSchema)
-    def post(self, new_user_data):
+    def post(self, new_user):
         """Create a new user"""
-        new_user = User(**new_user_data)
-        db.session.add(new_user)
-        db.session.commit()
+        global user_id_counter
+        new_user["id"] = user_id_counter
+        users.append(new_user)
+        user_id_counter += 1
         return new_user
 
 @blp.route("/<int:user_id>")
@@ -58,37 +63,30 @@ class UserResource(MethodView):
     @blp.response(200, UserSchema)
     def get(self, user_id):
         """Get a user by ID"""
-        user = User.query.get(user_id)
+        user = find_user(user_id)
         if not user:
             return {"message": "User not found"}, 404
         return user
 
     @blp.arguments(UserSchema)
     @blp.response(200, UserSchema)
-    def put(self, updated_user_data, user_id):
+    def put(self, updated_user, user_id):
         """Update a user"""
-        user = User.query.get(user_id)
+        user = find_user(user_id)
         if not user:
             return {"message": "User not found"}, 404
-        for key, value in updated_user_data.items():
-            setattr(user, key, value)
-        db.session.commit()
+        user.update(updated_user)
         return user
 
     def delete(self, user_id):
         """Delete a user"""
-        user = User.query.get(user_id)
+        user = find_user(user_id)
         if not user:
             return {"message": "User not found"}, 404
-        db.session.delete(user)
-        db.session.commit()
+        users.remove(user)
         return {"message": "User deleted"}, 200
 
 api.register_blueprint(blp)
 
 if __name__ == "__main__":
-    # Create database tables if they do not exist
-    with app.app_context():
-        db.create_all()
-
     app.run(host="0.0.0.0", port=8080, debug=False)
