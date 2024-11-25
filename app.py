@@ -6,7 +6,12 @@ from flask_smorest import Api, Blueprint
 from marshmallow import Schema, fields
 from flask.views import MethodView
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
 import config  # Import the database configuration
+from config import SQLALCHEMY_DATABASE_URI
+import logging
+
+
 
 # Initialize the Flask app and SQLAlchemy
 app = Flask(__name__)
@@ -21,6 +26,19 @@ app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-
 
 db = SQLAlchemy(app)  # Database instance
 api = Api(app)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Test the database connection during app startup
+try:
+    engine = create_engine(SQLALCHEMY_DATABASE_URI)
+    connection = engine.connect()
+    print("Database connected successfully!")
+    connection.close()  # Close the connection after the test
+except Exception as e:
+    print(f"Database connection failed: {e}")
+    raise
 
 # Define the User model
 class User(db.Model):
