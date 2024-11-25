@@ -23,8 +23,10 @@ def get_secret(secret_name):
 # Fetch database secrets and other configurations
 DB_USER = get_secret("db_user")  # Replace 'db_user' with your actual secret name in GCP
 DB_PASSWORD = get_secret("db_password")  # Replace 'db_password' with your actual secret name in GCP
-DB_NAME = os.getenv("DB_NAME", "my_database")  # Default to 'my_database' if not set
-INSTANCE_CONNECTION_NAME = os.getenv("INSTANCE_CONNECTION_NAME")  # Cloud SQL instance connection name
+#DB_NAME = os.getenv("DB_NAME", "my_database")  # Default to 'my_database' if not set
+#INSTANCE_CONNECTION_NAME = os.getenv("INSTANCE_CONNECTION_NAME")  # Cloud SQL instance connection name
+DB_NAME = os.getenv("DB_NAME", "my_database")  # Defaults to 'my_database' if not set
+INSTANCE_CONNECTION_NAME = os.getenv("INSTANCE_CONNECTION_NAME")  # No default, must be provided
 DB_SOCKET_PATH = f'/cloudsql/{INSTANCE_CONNECTION_NAME}'  # Unix socket path for Cloud SQL
 
 # Ensure required configurations are available
