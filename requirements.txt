@@ -6,3 +6,4 @@ flask-sqlalchemy
 marshmallow
 pg8000
 google-cloud-secret-manager
+google-cloud-sql
