@@ -49,6 +49,7 @@ substitutions:
   _ARTIFACT_REPO: "sky-art"
   _CLOUD_RUN_SA: "cloud-run-sa"
   _APP_NAME: "sky-flask-app"
+  _DB_NAME: "devdb"
   _INSTANCE_CONNECTION_NAME: "sky-root:us-central1:skypostgre"
 
 logsBucket: "gs://skydev-app-build-logs"
