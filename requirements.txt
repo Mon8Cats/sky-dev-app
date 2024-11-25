@@ -1,11 +1,7 @@
 flask
-flask-smorest
-gunicorn
-flask-cors
-sqlalchemy
+psycopg2-binary
 flask-sqlalchemy
-marshmallow
-pg8000
 google-cloud-secret-manager
-#google-cloud-sql
+python-dotenv
+
 
