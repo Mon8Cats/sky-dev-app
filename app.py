@@ -1,27 +1,8 @@
 # pylint: disable=import-error
 
-from flask import Flask
-from flask_smorest import Api, Blueprint
-from marshmallow import Schema, fields
-from flask.views import MethodView  # Import MethodView
+from flask import Flask, jsonify, request
 
-# Initialize Flask App
 app = Flask(__name__)
-
-# Configuration for Swagger (OpenAPI)
-app.config["API_TITLE"] = "Employee API"
-app.config["API_VERSION"] = "1.0"
-app.config["OPENAPI_VERSION"] = "3.0.3"
-app.config["OPENAPI_URL_PREFIX"] = "/"
-app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
-app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-
-# Initialize Flask-Smorest API
-api = Api(app)
-
-# Blueprint for Employees API
-blp = Blueprint("employees", "employees", url_prefix="/employees", description="Operations on employees")
-api.register_blueprint(blp)
 
 # In-memory database
 employees = [
@@ -32,62 +13,53 @@ employees = [
     {"id": 5, "name": "Eve", "title": "Developer", "email": "eve@example.com", "department": "IT"},
 ]
 
-# Schema for Employee
-class EmployeeSchema(Schema):
-    id = fields.Int(dump_only=True)  # ID is read-only
-    name = fields.Str(required=True)  # Name is required
-    title = fields.Str(required=True)  # Job title is required
-    email = fields.Email(required=True)  # Valid email is required
-    department = fields.Str(required=True)  # Department is required
+# Get all employees
+@app.route("/employees", methods=["GET"])
+def get_employees():
+    return jsonify(employees), 200
 
-# Routes
-@blp.route("/")
-class EmployeeListResource(MethodView):  # Inherit from MethodView
-    @blp.response(200, EmployeeSchema(many=True))
-    def get(self):
-        """Get all employees"""
-        return employees
+# Get an employee by ID
+@app.route("/employees/<int:employee_id>", methods=["GET"])
+def get_employee(employee_id):
+    employee = next((emp for emp in employees if emp["id"] == employee_id), None)
+    if employee:
+        return jsonify(employee), 200
+    return jsonify({"error": "Employee not found"}), 404
 
-    @blp.arguments(EmployeeSchema)
-    @blp.response(201, EmployeeSchema)
-    def post(self, new_employee):
-        """Add a new employee"""
-        new_employee["id"] = len(employees) + 1
-        employees.append(new_employee)
-        return new_employee
+# Add a new employee
+@app.route("/employees", methods=["POST"])
+def create_employee():
+    data = request.json
+    if not all(key in data for key in ["name", "title", "email", "department"]):
+        return jsonify({"error": "Missing required fields"}), 400
+    new_employee = {
+        "id": max(emp["id"] for emp in employees) + 1 if employees else 1,
+        "name": data["name"],
+        "title": data["title"],
+        "email": data["email"],
+        "department": data["department"],
+    }
+    employees.append(new_employee)
+    return jsonify(new_employee), 201
 
+# Update an existing employee
+@app.route("/employees/<int:employee_id>", methods=["PUT"])
+def update_employee(employee_id):
+    employee = next((emp for emp in employees if emp["id"] == employee_id), None)
+    if not employee:
+        return jsonify({"error": "Employee not found"}), 404
+    data = request.json
+    for key in ["name", "title", "email", "department"]:
+        if key in data:
+            employee[key] = data[key]
+    return jsonify(employee), 200
 
-@blp.route("/<int:employee_id>")
-class EmployeeResource(MethodView):  # Inherit from MethodView
-    @blp.response(200, EmployeeSchema)
-    def get(self, employee_id):
-        """Get an employee by ID"""
-        employee = next((e for e in employees if e["id"] == employee_id), None)
-        if not employee:
-            return {"message": "Employee not found"}, 404
-        return employee
+# Delete an employee
+@app.route("/employees/<int:employee_id>", methods=["DELETE"])
+def delete_employee(employee_id):
+    global employees
+    employees = [emp for emp in employees if emp["id"] != employee_id]
+    return jsonify({"message": "Employee deleted"}), 200
 
-    @blp.arguments(EmployeeSchema)
-    @blp.response(200, EmployeeSchema)
-    def put(self, updated_employee, employee_id):
-        """Update an existing employee"""
-        employee = next((e for e in employees if e["id"] == employee_id), None)
-        if not employee:
-            return {"message": "Employee not found"}, 404
-        employee.update(updated_employee)
-        return employee
-
-    @blp.response(200, description="Employee deleted")
-    def delete(self, employee_id):
-        """Delete an employee"""
-        global employees
-        employees = [e for e in employees if e["id"] != employee_id]
-        return {"message": "Employee deleted"}, 200
-
-
-# Register the Blueprint
-api.register_blueprint(blp)
-
-# Run the Flask App
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8080)
