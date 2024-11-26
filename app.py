@@ -21,6 +21,7 @@ api = Api(app)
 
 # Blueprint for Employees API
 blp = Blueprint("employees", "employees", url_prefix="/employees", description="Operations on employees")
+api.register_blueprint(blp)
 
 # In-memory database
 employees = [
