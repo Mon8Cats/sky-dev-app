@@ -25,4 +25,5 @@ COPY . .
 EXPOSE 8080
 
 # Set the entry point to run the Flask app
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
+#CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
+CMD ["python", "app.py"]
