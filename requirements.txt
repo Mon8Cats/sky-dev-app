@@ -2,4 +2,4 @@ Flask==2.2.5
 gunicorn==21.2.0
 psycopg2-binary==2.9.7
 google-cloud-secret-manager==2.16.2
-google-cloud-sql-connector==1.7.0
+google-cloud-sql-connector
