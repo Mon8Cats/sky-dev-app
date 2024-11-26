@@ -23,6 +23,7 @@ DB_NAME = "devdb"
 DB_HOST = "104.154.194.173"  # Public IP of the Cloud SQL instance
 DB_PORT = 5432  # Default PostgreSQL port
 
+
 connector = Connector()
 
 def get_db_connection():
@@ -49,22 +50,7 @@ employees = [
 # Get all employees
 @app.route("/employees", methods=["GET"])
 def get_employees():
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM employees;")
-        rows = cursor.fetchall()
-        conn.close()
-
-        # Convert rows to a list of dictionaries
-        employees = [
-            {"id": row[0], "name": row[1], "title": row[2], "email": row[3], "department": row[4]}
-            for row in rows
-        ]
-        return jsonify(employees), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    #return jsonify(employees), 200
+    return jsonify(employees), 200
 
 # Get an employee by ID
 @app.route("/employees/<int:employee_id>", methods=["GET"])
