@@ -1,22 +1,20 @@
-# Use the official Python image.
-FROM python:3.10-slim
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim
 
 # Set the working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy the requirements file into the container
 COPY requirements.txt .
+
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application files
+# Copy the application code into the container
 COPY . .
 
-# Expose the Flask development server port
+# Expose the port that the app will run on
 EXPOSE 8080
 
-# Start the app using Flask's built-in server
-CMD ["python", "app.py"]
+# Run the application
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:app"]
