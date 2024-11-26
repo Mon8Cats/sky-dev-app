@@ -1,25 +1,12 @@
 
 # pylint: disable=import-error
 
-import datetime
-import logging
-import os
-
-#from flask import Flask, render_template, request, Response
-#import sqlalchemy
-
-from connect_connector import connect_with_connector
-from connect_connector_auto_iam_authn import connect_with_connector_auto_iam_authn
-from connect_tcp import connect_tcp_socket
-from connect_unix import connect_unix_socket
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 import google.cloud.secretmanager as secretmanager
 
 app = Flask(__name__)
-
-
 
 # Function to access secrets
 def access_secret_version(secret_id, version_id="latest"):
@@ -33,47 +20,13 @@ project_id = "sky-root"
 db_user = access_secret_version("db_user")
 db_password = access_secret_version("db_password")
 db_name = "devdb" # os.getenv('DB_NAME', 'your_database')
-sql_connection_name = "sky-root:us-central1:skypostgre"
-#db_host ="localhost:5432" # os.getenv('DB_HOST', 'your_host')
-
-
-def init_db_connection():
-    db_config = {
-        'pool_size': 5,
-        'max_overflow': 2,
-        'pool_timeout': 3, 
-        'pool_recycle': 1800,
-    }
-    return init_unix_connection_engine(db_config)
-
-def init_unix_connection_engine(db_config):
-    pool = sqlalchemy.create_engine(
-        sqlalchemy.engine.url.URL(
-            drivername="postgres+pg8000",
-            #host=os.environ.get('DB_HOST'),
-            #port=os.environ.get('DB_PORT'),
-            username=db_user, #os.environ.get('DB_USER'),
-            password=db_password, #os.environ.get('DB_PASS'),
-            database=db_name, #os.environ.get('DB_NAME'),
-            query={
-                "unix_sock": "/cloudsql/{}/.s.PGSQL.5432".format(sql_connection_name
-                    #os.environ.get('CLOUD_SQL_CONNECTION_NAME')
-                )
-            }
-        ),
-        **db_config
-    )
-    pool.dialect.description_encoding = None
-    return pool
-
-db = init_db_connection()
-
+db_host ="localhost:5432" # os.getenv('DB_HOST', 'your_host')
 
 # Configuration
-#app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-#db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 
 # Define the model
 class User(db.Model):
