@@ -1,10 +1,13 @@
-#
 # pylint: disable=import-error
-#
 
 from flask import Flask, jsonify, request
+from flask_restx import Api, Resource, fields
 
 app = Flask(__name__)
+api = Api(app, title="Employee API", description="A simple CRUD API for managing employees")
+
+# Namespace for organizing APIs
+employee_ns = api.namespace("employees", description="Operations related to employees")
 
 # In-memory database
 employees = [
@@ -15,53 +18,69 @@ employees = [
     {"id": 5, "name": "Eve", "title": "Developer", "email": "eve@example.com", "department": "IT"},
 ]
 
-# Get all employees
-@app.route("/employees", methods=["GET"])
-def get_employees():
-    return jsonify(employees), 200
+# Model for Employee
+employee_model = api.model(
+    "Employee",
+    {
+        "id": fields.Integer(readOnly=True, description="The unique ID of the employee"),
+        "name": fields.String(required=True, description="The name of the employee"),
+        "title": fields.String(required=True, description="The job title of the employee"),
+        "email": fields.String(required=True, description="The email of the employee"),
+        "department": fields.String(required=True, description="The department of the employee"),
+    },
+)
 
-# Get an employee by ID
-@app.route("/employees/<int:employee_id>", methods=["GET"])
-def get_employee(employee_id):
-    employee = next((emp for emp in employees if emp["id"] == employee_id), None)
-    if employee:
-        return jsonify(employee), 200
-    return jsonify({"error": "Employee not found"}), 404
+# Routes
+@employee_ns.route("/")
+class EmployeeList(Resource):
+    @employee_ns.marshal_with(employee_model, as_list=True)
+    def get(self):
+        """Get all employees"""
+        return employees
 
-# Add a new employee
-@app.route("/employees", methods=["POST"])
-def create_employee():
-    data = request.json
-    if not all(key in data for key in ["name", "title", "email", "department"]):
-        return jsonify({"error": "Missing required fields"}), 400
-    new_employee = {
-        "id": max(emp["id"] for emp in employees) + 1 if employees else 1,
-        "name": data["name"],
-        "title": data["title"],
-        "email": data["email"],
-        "department": data["department"],
-    }
-    employees.append(new_employee)
-    return jsonify(new_employee), 201
+    @employee_ns.expect(employee_model, validate=True)
+    @employee_ns.marshal_with(employee_model, code=201)
+    def post(self):
+        """Add a new employee"""
+        data = request.json
+        new_employee = {
+            "id": max(emp["id"] for emp in employees) + 1 if employees else 1,
+            **data,
+        }
+        employees.append(new_employee)
+        return new_employee, 201
 
-# Update an existing employee
-@app.route("/employees/<int:employee_id>", methods=["PUT"])
-def update_employee(employee_id):
-    employee = next((emp for emp in employees if emp["id"] == employee_id), None)
-    if not employee:
-        return jsonify({"error": "Employee not found"}), 404
-    data = request.json
-    for key in ["name", "title", "email", "department"]:
-        if key in data:
+
+@employee_ns.route("/<int:employee_id>")
+@employee_ns.response(404, "Employee not found")
+class Employee(Resource):
+    @employee_ns.marshal_with(employee_model)
+    def get(self, employee_id):
+        """Get an employee by ID"""
+        employee = next((emp for emp in employees if emp["id"] == employee_id), None)
+        if not employee:
+            api.abort(404, "Employee not found")
+        return employee
+
+    @employee_ns.expect(employee_model, validate=True)
+    @employee_ns.marshal_with(employee_model)
+    def put(self, employee_id):
+        """Update an employee"""
+        employee = next((emp for emp in employees if emp["id"] == employee_id), None)
+        if not employee:
+            api.abort(404, "Employee not found")
+        data = request.json
+        for key in data:
             employee[key] = data[key]
-    return jsonify(employee), 200
+        return employee
 
-# Delete an employee
-@app.route("/employees/<int:employee_id>", methods=["DELETE"])
-def delete_employee(employee_id):
-    global employees
-    employees = [emp for emp in employees if emp["id"] != employee_id]
-    return jsonify({"message": "Employee deleted"}), 200
+    @employee_ns.response(200, "Employee deleted")
+    def delete(self, employee_id):
+        """Delete an employee"""
+        global employees
+        employees = [emp for emp in employees if emp["id"] != employee_id]
+        return {"message": "Employee deleted"}, 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
