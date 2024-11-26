@@ -4,6 +4,7 @@ import os
 import psycopg2
 from flask import Flask, jsonify, request
 from google.cloud import secretmanager
+from google.cloud.sql.connector import Connector
 
 app = Flask(__name__)
 
@@ -22,24 +23,19 @@ DB_NAME = "devdb"
 DB_HOST = "104.154.194.173"  # Public IP of the Cloud SQL instance
 DB_PORT = 5432  # Default PostgreSQL port
 
-def get_db_connection():
-    return psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT
-    )
+connector = Connector()
 
-conn = psycopg2.connect(
-    dbname="devdb",
-    user="<db_user>",
-    password="<db_password>",
-    host="104.154.194.173",
-    port=5432
-)
-print("Connected successfully!")
-conn.close()
+def get_db_connection():
+    conn = connector.connect(
+        "sky-root:us-central1:skypostgre",  # Replace with your Cloud SQL connection name
+        "pg8000",  # Or "psycopg2"
+        user="skyroot", #os.getenv("DB_USER"),  # Use Secret Manager to fetch
+        password="skypassword", #os.getenv("DB_PASSWORD"),
+        dbname="devdb",
+    )
+    return conn
+
+
 
 # In-memory database
 employees = [
