@@ -1,1 +1,6 @@
 Flask==2.2.2
+Gunicorn==20.1.0
+python-dotenv==1.0.0
+SQLAlchemy==1.4.46
+psycopg2-binary==2.9.6
+requests==2.31.0
