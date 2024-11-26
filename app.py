@@ -31,6 +31,16 @@ def get_db_connection():
         port=DB_PORT
     )
 
+conn = psycopg2.connect(
+    dbname="devdb",
+    user="<db_user>",
+    password="<db_password>",
+    host="104.154.194.173",
+    port=5432
+)
+print("Connected successfully!")
+conn.close()
+
 # In-memory database
 employees = [
     {"id": 1, "name": "AliceX", "title": "Engineer", "email": "alice@example.com", "department": "IT"},
