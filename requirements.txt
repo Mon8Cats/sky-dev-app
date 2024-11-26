@@ -3,3 +3,6 @@ gunicorn==21.2.0
 # swagger
 #flask-smorest 
 #marshmallow
+psycopg2==2.9.7
+google-cloud-secret-manager==2.16.2
+gunicorn==21.2.0
