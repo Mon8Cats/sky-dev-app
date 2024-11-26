@@ -16,8 +16,8 @@ def get_secret(secret_id):
     return response.payload.data.decode("UTF-8")
 
 # Database credentials
-DB_USER = get_secret("db_user")  # Fetch username
-DB_PASSWORD = get_secret("db_password")  # Fetch password
+DB_USER = "skyroot" #get_secret("db_user")  # Fetch username
+DB_PASSWORD = "skypassword" #get_secret("db_password")  # Fetch password
 DB_NAME = "devdb"
 DB_HOST = "104.154.194.173"  # Public IP of the Cloud SQL instance
 DB_PORT = 5432  # Default PostgreSQL port
@@ -33,11 +33,11 @@ def get_db_connection():
 
 # In-memory database
 employees = [
-    {"id": 1, "name": "Alice", "title": "Engineer", "email": "alice@example.com", "department": "IT"},
-    {"id": 2, "name": "Bob", "title": "Manager", "email": "bob@example.com", "department": "HR"},
-    {"id": 3, "name": "Charlie", "title": "Analyst", "email": "charlie@example.com", "department": "Finance"},
-    {"id": 4, "name": "Diana", "title": "Designer", "email": "diana@example.com", "department": "Marketing"},
-    {"id": 5, "name": "Eve", "title": "Developer", "email": "eve@example.com", "department": "IT"},
+    {"id": 1, "name": "AliceX", "title": "Engineer", "email": "alice@example.com", "department": "IT"},
+    {"id": 2, "name": "BobX", "title": "Manager", "email": "bob@example.com", "department": "HR"},
+    {"id": 3, "name": "CharlieX", "title": "Analyst", "email": "charlie@example.com", "department": "Finance"},
+    {"id": 4, "name": "DianaX", "title": "Designer", "email": "diana@example.com", "department": "Marketing"},
+    {"id": 5, "name": "EveX", "title": "Developer", "email": "eve@example.com", "department": "IT"},
 ]
 
 # Get all employees
