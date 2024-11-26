@@ -3,7 +3,7 @@
 
 from flask import Flask
 from sqlalchemy import create_engine
-from config import SQLALCHEMY_DATABASE_URI
+from archive.config import SQLALCHEMY_DATABASE_URI
 
 app = Flask(__name__)
 

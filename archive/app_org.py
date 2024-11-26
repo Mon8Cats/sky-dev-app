@@ -7,8 +7,8 @@ from marshmallow import Schema, fields
 from flask.views import MethodView
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
-import config  # Import the database configuration
-from config import SQLALCHEMY_DATABASE_URI
+import archive.config as config  # Import the database configuration
+from archive.config import SQLALCHEMY_DATABASE_URI
 import logging
 
 
