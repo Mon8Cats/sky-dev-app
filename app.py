@@ -3,6 +3,7 @@
 from flask import Flask
 from flask_smorest import Api, Blueprint
 from marshmallow import Schema, fields
+from flask.views import MethodView  # Import MethodView
 
 # Initialize Flask App
 app = Flask(__name__)
@@ -40,7 +41,7 @@ class EmployeeSchema(Schema):
 
 # Routes
 @blp.route("/")
-class EmployeeListResource:
+class EmployeeListResource(MethodView):  # Inherit from MethodView
     @blp.response(200, EmployeeSchema(many=True))
     def get(self):
         """Get all employees"""
@@ -56,7 +57,7 @@ class EmployeeListResource:
 
 
 @blp.route("/<int:employee_id>")
-class EmployeeResource:
+class EmployeeResource(MethodView):  # Inherit from MethodView
     @blp.response(200, EmployeeSchema)
     def get(self, employee_id):
         """Get an employee by ID"""
