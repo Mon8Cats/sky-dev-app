@@ -1,13 +1,13 @@
 # Use the slim version of Python
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 # Set the working directory
 WORKDIR /app
 
-# Install system dependencies
+
+# Install dependencies required for psycopg2 and Cloud SQL Auth Proxy
 RUN apt-get update && apt-get install -y \
-    libpq-dev gcc \
-    && rm -rf /var/lib/apt/lists/*
+    libpq-dev gcc && apt-get clean
 
 # Copy and install dependencies
 COPY requirements.txt .
