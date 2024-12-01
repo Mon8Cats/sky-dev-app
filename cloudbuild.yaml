@@ -1,4 +1,14 @@
 steps:
+  steps:
+  # Debug: Print the value of the secret
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      [
+        "-c",
+        "echo 'DB_PASSWORD: $(gcloud secrets versions access latest --secret=db_password)'"
+      ]
+
   # Step 1: Build the Docker image
   - name: "gcr.io/cloud-builders/docker"
     args:
