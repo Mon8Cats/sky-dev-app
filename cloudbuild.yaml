@@ -58,7 +58,8 @@ steps:
     args:
       [
         "-c",
-        "export _SECRET_DB_PASSWORD && env | grep _SECRET_DB_PASSWORD && echo \"_SECRET_DB_PASSWORD is set to: ${_SECRET_DB_PASSWORD}\""
+        "echo env"
+        #"export _SECRET_DB_PASSWORD && env | grep _SECRET_DB_PASSWORD && echo \"_SECRET_DB_PASSWORD is set to: ${_SECRET_DB_PASSWORD}\""
       ]
     id: "Check Environment Variables222"
 
