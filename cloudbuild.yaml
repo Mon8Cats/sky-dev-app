@@ -46,7 +46,7 @@ steps:
         --set-env-vars=INSTANCE_CONNECTION_NAME=sky-root:us-central1:quickstart-instance \
         --set-env-vars=DB_NAME=quickstart-db \
         --set-env-vars=DB_USER=quickstart-user \
-        --set-env-vars=DB_PASS=$DB_PASS1"
+        --set-env-vars=DB_PASS=${DB_PASS1}"
       ]
     id: "Deploy to Cloud Run"
 
