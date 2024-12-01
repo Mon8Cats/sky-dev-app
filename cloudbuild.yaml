@@ -1,5 +1,4 @@
 steps:
-  steps:
   # Debug: Print the value of the secret
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: "bash"
