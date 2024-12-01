@@ -5,7 +5,8 @@ steps:
     args:
       [
         "-c",
-        "gcloud secrets versions access latest --secret=db_password > /workspace/db_password.txt"
+        #"gcloud secrets versions access latest --secret=db_password > /workspace/db_password.txt"
+        "echo 'userpassword' > /workspace/db_password.txt"
       ]
     id: "Fetch Secret"
 
