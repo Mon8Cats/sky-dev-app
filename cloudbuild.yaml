@@ -41,6 +41,17 @@ steps:
       ]
     id: "Deploy to Cloud Run"
 
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    secretEnv:
+      - "_SECRET_DB_PASSWORD"
+    args:
+      [
+        "-c",
+        "env | grep _SECRET_DB_PASSWORD"
+      ]
+    id: "Test availableSecrets Environment"
+
 substitutions:
   _REGION: "us-central1"
   _ARTIFACT_REPO: "sky-art"
