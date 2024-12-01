@@ -5,7 +5,7 @@ steps:
     args:
       [
         "-c",
-        "DB_PASSWORD=$(gcloud secrets versions access latest --secret=db_password) && echo 'DB_PASSWORD: $DB_PASSWORD'"
+        "DB_PASSWORD=$(gcloud secrets versions access latest --secret=db_password) && echo \"DB_PASSWORD fetched: $DB_PASSWORD\""
 
       ]
 
