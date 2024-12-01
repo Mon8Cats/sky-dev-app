@@ -5,7 +5,8 @@ steps:
     args:
       [
         "-c",
-        "echo 'DB_PASSWORD: $(gcloud secrets versions access latest --secret=db_password)'"
+        "DB_PASSWORD=$(gcloud secrets versions access latest --secret=db_password) && echo 'DB_PASSWORD: $DB_PASSWORD'"
+
       ]
 
   # Step 1: Build the Docker image
