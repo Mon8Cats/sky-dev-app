@@ -5,8 +5,7 @@ steps:
     args:
       [
         "-c",
-        "SECRET_VALUE=$(gcloud secrets versions access latest --secret=db_password) && echo \"Secret fetched: $SECRET_VALUE\""
-
+        "gcloud secrets versions access latest --secret=db_password && echo 'Secret fetched successfully'"
       ]
 
   # Step 1: Build the Docker image
