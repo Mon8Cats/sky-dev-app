@@ -140,6 +140,19 @@ gcloud run deploy run-sql --image gcr.io/sky-root/run-sql \
 
 
 
+### Update Password
+
+```bash
+gcloud secrets versions access latest --secret=db_password
+echo -n "NEW_SECRET_VALUE" | gcloud secrets versions add db_password --data-file=-
+gcloud secrets versions list db_password
+gcloud secrets versions disable VERSION_ID --secret=db_password
+gcloud secrets versions destroy VERSION_ID --secret=db_password
+
+
+
+```
+
 
 
 References
