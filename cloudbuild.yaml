@@ -24,7 +24,7 @@ steps:
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: "bash"
     secretEnv:
-      - "DB_PASS"  # Map the secret to DB_PASS environment variable
+      - "DB_PASS"  # Use the secret DB_PASS from Secret Manager
     args:
       [
         "-c",
@@ -45,7 +45,7 @@ steps:
 availableSecrets:
   secretManager:
     - versionName: "projects/${PROJECT_ID}/secrets/db_password/versions/latest"
-      env: "DB_PASS"  # Map the secret to this environment variable
+      env: "DB_PASS"  # Map the secret to the DB_PASS environment variable
 
 substitutions:
   _REGION: "us-central1"
