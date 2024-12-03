@@ -22,8 +22,6 @@ steps:
   # Step 3: Deploy to Cloud Run
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: "bash"
-    secretEnv:
-      - "_SECRET_DB_PASSWORD"  # Use the secret from availableSecrets
     args:
       [
         "-c",
@@ -35,18 +33,18 @@ steps:
           --service-account ${_CLOUD_RUN_SA}@${PROJECT_ID}.iam.gserviceaccount.com \
           --allow-unauthenticated \
           --add-cloudsql-instances sky-root:us-central1:quickstart-instance \
-          --set-env-vars INSTANCE_UNIX_SOCKET=/cloudsql/sky-root:us-central1:quickstart-instance,INSTANCE_CONNECTION_NAME=sky-root:us-central1:quickstart-instance,DB_NAME=quickstart-db,DB_USER=quickstart-user,DB_PASS=${_SECRET_DB_PASSWORD}"
+          --set-env-vars INSTANCE_UNIX_SOCKET=/cloudsql/sky-root:us-central1:quickstart-instance,INSTANCE_CONNECTION_NAME=sky-root:us-central1:quickstart-instance,DB_NAME=quickstart-db,DB_USER=quickstart-user,DB_PASS=$$_SECRET_DB_PASSWORD"
       ]
+    secretEnv: ['_SECRET_DB_PASSWORD']  # Use the secret from availableSecrets
     id: "Deploy to Cloud Run"
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: "bash"
-    secretEnv:
-      - "_SECRET_DB_PASSWORD"
+    secretEnv: ['_SECRET_DB_PASSWORD']
     args:
       [
         "-c",
-        "export _SECRET_DB_PASSWORD && echo \"All environment variables:\" && env && echo \"_SECRET_DB_PASSWORD is set to: ${_SECRET_DB_PASSWORD}\""
+        "export $$_SECRET_DB_PASSWORD && echo \"All environment variables:\" && env && echo \"_SECRET_DB_PASSWORD is set to: $$_SECRET_DB_PASSWORD\""
       ]
     id: "Check Environment Variables"
 
